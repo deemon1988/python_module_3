@@ -1,43 +1,57 @@
+
 data_structure = [
     [1, 2, 3],
     {'a': 4, 'b': 5},
-    # (6, {'cube': 7, 'drum': 8}),
-    # "Hello",
-    # ((), [{(2, 'Urban', ('Urban2', 35))}])
+    (6, {'cube': 7, 'drum': 8}),
+    "Hello",
+    ((), [{(2, 'Urban', ('Urban2', 35))}])
 ]
 
+def calculate_structure_sum(data_structure):
+    *list_, = data_structure
+    first = list_[:1]
+    key, value = 0, 0
+    summ = 0
+    for i in list_:
+        if isinstance(i, str):
+            summ = len(i)
+            return summ + calculate_structure_sum(list_[1:])
+        elif isinstance(i, int):
+            summ += i
+            return summ + calculate_structure_sum(list_[1:])
+        elif isinstance(i, list):
+            for j in i:
+                if isinstance(j, int):
+                   summ += j
+                elif isinstance(j, str):
+                    summ += len(j)
+                elif isinstance(j, set):
+                    for js in j:
+                        return calculate_structure_sum(js)
+            return summ + calculate_structure_sum(list_[1:])
+        elif isinstance(i, dict):
+            for k,v in i.items():
+                key += len(k)
+                value += v
+            summ = key + value
+            return summ + calculate_structure_sum(list_[1:])
+        elif isinstance(i, tuple):
+            for t in i:
+                if isinstance(t, int):
+                   summ += t
+                elif isinstance(t, str):
+                    summ += len(t)
+                elif isinstance(t, dict):
+                    for k1, v1 in t.items():
+                        key += len(k1)
+                        value += v1
+                    summ += key + value
+                else:
+                    return calculate_structure_sum(i[1:])
+            return summ + calculate_structure_sum(list_[1:])
+    return sum(first)
 
-dict_= {'cube': 7, 'drum': 8}
-k=0
-w=0
-for d, v in dict_.items():
-    k += len(d)
-    w += v
-summ = k + w
 
-
-print(*data_structure)
-
-def calculate_srtucture_sum(data_structure):
-
-    if len(data_structure) > 0:
-        for i in data_structure:
-          if isinstance(i,list):
-              return sum(i) + calculate_srtucture_sum(data_structure[1:])
-          elif isinstance(i, dict):
-              k = 0
-              w = 0
-              for d, v in i.items():
-                  k += len(d)
-                  w += v
-              summ = k + w
-              return summ+calculate_srtucture_sum(data_structure[1:])
-    else:
-         return sum(data_structure[:1])
-
-summary = calculate_srtucture_sum(data_structure)
-
-print(summary)
-
-
+result  = calculate_structure_sum(data_structure)
+print(result)
 
