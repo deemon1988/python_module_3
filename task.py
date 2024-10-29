@@ -1,27 +1,3 @@
-def calculate_sum_and_length(data):
-    total_sum = 0
-    total_length = 0
-
-    def recursive_calc(item):
-        nonlocal total_sum, total_length
-
-        if isinstance(item, int):  # Если элемент — число, добавляем к общей сумме
-            total_sum += item
-        elif isinstance(item, str):  # Если элемент — строка, добавляем длину к общей длине
-            total_length += len(item)
-        elif isinstance(item, (list, tuple, set)):  # Если элемент — список, кортеж или множество
-            for sub_item in item:
-                recursive_calc(sub_item)
-        elif isinstance(item, dict):  # Если элемент — словарь
-            for key, value in item.items():
-                recursive_calc(key)  # Обрабатываем ключ
-                recursive_calc(value)  # Обрабатываем значение
-
-    recursive_calc(data)
-    return total_sum, total_length
-
-
-# Пример вызова функции
 data_structure = [
     [1, 2, 3],
     {'a': 4, 'b': 5},
@@ -30,6 +6,45 @@ data_structure = [
     ((), [{(2, 'Urban', ('Urban2', 35))}])
 ]
 
-result = calculate_sum_and_length(data_structure)
-print("Total sum of numbers:", result[0])
-print("Total length of strings:", result[1])
+
+def calculate_structure_sum(data_structure):
+    *list_, = data_structure
+    # first = list_[:1]
+    key, value = 0, 0
+    summ = 0
+    if len(list_) > 0:
+        for i in list_:
+            if isinstance(i, int):
+                summ += i
+                return summ + calculate_structure_sum(list_[1:])
+            elif isinstance(i, str):
+                summ += len(i)
+                return summ + calculate_structure_sum(list_[1:])
+            elif isinstance(i, dict):
+                for k, v in i.items():
+                    key += len(k)
+                    value += v
+                summ = key + value
+                return summ + calculate_structure_sum(list_[1:])
+            elif isinstance(i, tuple | list | set):
+                for j in i:
+                    if not j:
+                        continue
+                    elif isinstance(j, int):
+                        summ += j
+                    elif isinstance(j, str):
+                        summ += len(j)
+                    elif isinstance(j, dict):
+                        for k, v in j.items():
+                            key += len(k)
+                            value += v
+                        summ = key + value
+                    else:
+                        return summ + calculate_structure_sum(j)
+                return summ + calculate_structure_sum(list_[1:])
+    else:
+        return summ
+
+
+res = calculate_structure_sum(data_structure)
+print(res)
