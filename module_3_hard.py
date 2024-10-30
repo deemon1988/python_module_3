@@ -1,76 +1,64 @@
-
 data_structure = [
     [1, 2, 3],
     {'a': 4, 'b': 5},
     (6, {'cube': 7, 'drum': 8}),
     "Hello",
-    #((), [{(2, 'Urban', ('Urban2', 35))}])
+    ((), [{(2, 'Urban', ('Urban2', 35))}])
 ]
 
 
-for i in data_structure:
-    if isinstance(i, list):
-       *list_, = i
-
-
-tuple_ = ((), [{(2, 'Urban', ('Urban2', 35))}])
-
-
-def unpack_recursive(struc):
-    if isinstance(struc, set):
-        one_element = struc.pop()
-    elif isinstance(struc, tuple|list):
-        one_element = struc[:1]
-    else:
-        one_element = ()
-
-    if  len(one_element) > 0 and isinstance(one_element, list|tuple|str|int):
-        summ = 0
-        for i in one_element:
+def calculate_structure_sum(data_structure):
+    *list_, = data_structure
+    # first = list_[:1]
+    key, value = 0, 0
+    summ = 0
+    if len(list_) > 0:
+        for i in list_:
             if isinstance(i, int):
                 summ += i
+                return summ + calculate_structure_sum(list_[1:])
+
             elif isinstance(i, str):
                 summ += len(i)
-            elif isinstance(i,tuple|list|set) and len(i) > 0:
-                return summ + unpack_recursive(i)
-        else:
-            return summ + unpack_recursive(struc[1:])
-    else:
-        return sum(struc[:1])
+                return summ + calculate_structure_sum(list_[1:])
 
-many_tuple = unpack_recursive(tuple_)
-print(many_tuple)
+            elif isinstance(i, dict):
+                for k, v in i.items():
+                    key += len(k)
+                    value += v
+                summ = key + value
+                return summ + calculate_structure_sum(list_[1:])
 
-
-def calculate_structure_sum(data_structure):
-    if len(data_structure)>0:
-        summ = 0
-        k = 0
-        w = 0
-        for i in (data_structure):
-            if isinstance(i, str):
-                str_=len(i)
-                return str_ + calculate_structure_sum(data_structure[1:])
-            if isinstance(i, tuple):
+            elif isinstance(i, list):
                 for j in i:
                     if isinstance(j, int):
                         summ += j
-                    elif isinstance(j, dict):
-                        for d, v in j.items():
-                            k += len(d)
-                            w += v
-                        summ += k + w
-                return summ + calculate_structure_sum(data_structure[1:])
-            elif isinstance(i, dict):
-                for d,v in i.items():
-                    k += len(d)
-                    w += v
-                summ = k + w
-                return summ + calculate_structure_sum(data_structure[1:])
-            elif isinstance(i, list):
-                return sum(i) + calculate_structure_sum(data_structure[1:])
-    else:
-        return sum(data_structure[:1])
+                    elif isinstance(j, str):
+                        summ += len(j)
+                    elif isinstance(j, set):
+                        for js in j:
+                            return calculate_structure_sum(js)
+                return summ + calculate_structure_sum(list_[1:])
 
-count_sum = calculate_structure_sum(data_structure)
-print(count_sum)
+            elif isinstance(i, tuple):
+                for t in i:
+                    if not t:
+                        continue
+                    elif isinstance(t, int):
+                        summ += t
+                    elif isinstance(t, str):
+                        summ += len(t)
+                    elif isinstance(t, dict):
+                        for k1, v1 in t.items():
+                            key += len(k1)
+                            value += v1
+                        summ += key + value
+                    else:
+                        return calculate_structure_sum(i)
+                return summ + calculate_structure_sum(list_[1:])
+    else:
+        return summ
+
+
+result = calculate_structure_sum(data_structure)
+print(result)
