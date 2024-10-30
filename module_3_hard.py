@@ -28,16 +28,16 @@ def calculate_structure_sum(data_structure):
                 return summ + calculate_structure_sum(data_structure[1:])
 
             elif isinstance(i, set | list | tuple | str):
-                for s in i:
-                    if not s:
+                for item in i:
+                    if not item:
                         continue
-                    elif isinstance(s, int):
-                        summ += s
-                    elif isinstance(s, str):
-                        summ += len(s)
+                    elif isinstance(item, int):
+                        summ += item
+                    elif isinstance(item, str):
+                        summ += len(item)
                     else:
                         new_list.remove(first)
-                        new_list.insert(0, s)
+                        new_list.insert(0, item)
                         if summ == 0:
                             calculate_structure_sum(new_list)
                         return summ + calculate_structure_sum(new_list)
