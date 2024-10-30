@@ -1,3 +1,5 @@
+#  Задание "Раз, два, три, четыре, пять .... Это не всё?"
+
 data_structure = [
     [1, 2, 3],
     {'a': 4, 'b': 5},
@@ -8,54 +10,38 @@ data_structure = [
 
 
 def calculate_structure_sum(data_structure):
-    *list_, = data_structure
-    # first = list_[:1]
-    key, value = 0, 0
     summ = 0
-    if len(list_) > 0:
-        for i in list_:
-            if isinstance(i, int):
-                summ += i
-                return summ + calculate_structure_sum(list_[1:])
 
-            elif isinstance(i, str):
-                summ += len(i)
-                return summ + calculate_structure_sum(list_[1:])
+    if len(data_structure) > 0:
 
-            elif isinstance(i, dict):
+        new_list = data_structure.copy()
+        first = new_list[0]
+        key, value = 0, 0
+
+        for i in data_structure:
+
+            if isinstance(i, dict):
                 for k, v in i.items():
                     key += len(k)
                     value += v
                 summ = key + value
-                return summ + calculate_structure_sum(list_[1:])
+                return summ + calculate_structure_sum(data_structure[1:])
 
-            elif isinstance(i, list):
-                for j in i:
-                    if isinstance(j, int):
-                        summ += j
-                    elif isinstance(j, str):
-                        summ += len(j)
-                    elif isinstance(j, set):
-                        for js in j:
-                            return calculate_structure_sum(js)
-                return summ + calculate_structure_sum(list_[1:])
-
-            elif isinstance(i, tuple):
-                for t in i:
-                    if not t:
+            elif isinstance(i, set | list | tuple | str):
+                for s in i:
+                    if not s:
                         continue
-                    elif isinstance(t, int):
-                        summ += t
-                    elif isinstance(t, str):
-                        summ += len(t)
-                    elif isinstance(t, dict):
-                        for k1, v1 in t.items():
-                            key += len(k1)
-                            value += v1
-                        summ += key + value
+                    elif isinstance(s, int):
+                        summ += s
+                    elif isinstance(s, str):
+                        summ += len(s)
                     else:
-                        return calculate_structure_sum(i)
-                return summ + calculate_structure_sum(list_[1:])
+                        new_list.remove(first)
+                        new_list.insert(0, s)
+                        if summ == 0:
+                            calculate_structure_sum(new_list)
+                        return summ + calculate_structure_sum(new_list)
+                return summ + calculate_structure_sum(new_list[1:])
     else:
         return summ
 
